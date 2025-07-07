@@ -1,4 +1,4 @@
-import { Connector, useConnect, useSwitchChain, useWriteContract } from 'wagmi';
+import { Connector, useAccount, useConnect, useSwitchChain, useWriteContract } from 'wagmi';
 import { PublicClient } from 'viem';
 import { monadTestnet } from '../wagmiConfig';
 
@@ -7,7 +7,7 @@ interface UseMintProps {
   isConnected: boolean;
   chainId: number | undefined;
   connect: ReturnType<typeof useConnect>['connect'];
-  connectors: Connector[];
+  connectors: readonly Connector[];
   switchChainAsync: ReturnType<typeof useSwitchChain>['switchChainAsync'];
   writeContractAsync: ReturnType<typeof useWriteContract>['writeContractAsync'];
   isPending: boolean;
