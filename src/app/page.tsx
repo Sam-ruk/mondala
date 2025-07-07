@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Mondala from "@/components/Mondala";
 
 export default function Home() {

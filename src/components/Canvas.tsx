@@ -3,10 +3,9 @@ import { CanvasConfig } from "../types";
 interface CanvasProps {
   config: CanvasConfig;
   isVibingState: boolean;
-  status: string | null;
 }
 
-export default function Canvas({ config, isVibingState, status }: CanvasProps) {
+export default function Canvas({ config, isVibingState }: CanvasProps) {
   const { canvasRef } = config;
 
   return (

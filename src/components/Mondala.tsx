@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useAccount, useConnect, useSwitchChain, useWriteContract } from 'wagmi';
-import { wagmiConfig, publicClient } from '../wagmiConfig';
+import { publicClient } from '../wagmiConfig';
 import Controls from "./Controls";
 import Canvas from "./Canvas";
 import Alert from "./Alert";

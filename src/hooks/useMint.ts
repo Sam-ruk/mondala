@@ -1,4 +1,4 @@
-import { Connector, useAccount, useConnect, useSwitchChain, useWriteContract } from 'wagmi';
+import { Connector, useConnect, useSwitchChain, useWriteContract } from 'wagmi';
 import { PublicClient } from 'viem';
 import { monadTestnet } from '../wagmiConfig';
 
