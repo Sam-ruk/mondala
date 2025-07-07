@@ -317,8 +317,8 @@ export default function useCanvas({
     if (!ctxRef.current || !offscreenCanvasRef.current) return;
     const animatedSVG = await createIsolatedRingSVG();
     if (animatedSVG) {
-      downloadSVG(animatedSVG, "mandala_isolated_rings.svg");
       await handleMint(animatedSVG);
+      downloadSVG(animatedSVG, "mandala_isolated_rings.svg");
     }
   };
 
