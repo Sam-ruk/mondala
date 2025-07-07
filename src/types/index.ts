@@ -8,11 +8,13 @@ export interface MousePosition {
 }
 
 export interface PathData {
-  x: number;
-  y: number;
-  ringIndex?: number; 
-  color?: string; 
-  penSize?: number; 
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+  color: string;
+  lineWidth: number;
+  ring: number;
 }
 
 export interface CanvasConfig {
@@ -33,6 +35,7 @@ export interface CanvasConfig {
   scaleRef: MutableRefObject<number>;
   canvasSizeRef: MutableRefObject<number>;
   analyserRef: MutableRefObject<AnalyserNode | null>;
+  audioRef: MutableRefObject<HTMLAudioElement | null>;
 }
 
 export interface RingData {
