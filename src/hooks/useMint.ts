@@ -167,7 +167,7 @@ export default function useMint({
         gasLimit = BigInt(Math.floor(Number(estimatedGas) * 1.2));
       } catch (gasEstimationError: any) {
         console.warn('Gas estimation failed, using default gas limit:', gasEstimationError);
-        gasLimit = 100000000 // High gas
+        gasLimit = BigInt(100000000) // High gas
       }
 
       setAlert({ message: 'Minting NFT...', type: 'success' });
