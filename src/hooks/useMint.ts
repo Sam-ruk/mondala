@@ -124,6 +124,12 @@ export default function useMint({
       }
     }
 
+    if (!address) {
+      console.error('No valid address provided for minting');
+      setAlert({ message: 'No valid wallet address. Please connect your wallet.', type: 'error' });
+      return false;
+    }
+    
     // Mint NFT
     try {
       setAlert({ message: 'Estimating gas...', type: 'success' });
