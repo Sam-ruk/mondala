@@ -28,7 +28,7 @@ export default function Mondala() {
   const [isAudioUploaded, setIsAudioUploaded] = useState(false);
   const [alert, setAlert] = useState<AlertState>(null);
 
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null!);
   const offscreenCanvasRef = useRef<HTMLCanvasElement>(null!);
   const ctxRef = useRef<CanvasRenderingContext2D>(null!);
   const fileInputRef = useRef<HTMLInputElement>(null!);
