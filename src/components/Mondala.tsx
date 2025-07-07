@@ -29,12 +29,12 @@ export default function Mondala() {
   const [alert, setAlert] = useState<AlertState>(null);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const offscreenCanvasRef = useRef<HTMLCanvasElement | null>(null);
-  const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
+  const offscreenCanvasRef = useRef<HTMLCanvasElement>(null!);
+  const ctxRef = useRef<CanvasRenderingContext2D>(null!);
   const fileInputRef = useRef<HTMLInputElement>(null!);
-  const audioCtxRef = useRef<AudioContext | null>(null);
-  const analyserRef = useRef<AnalyserNode | null>(null);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioCtxRef = useRef<AudioContext>(null!);
+  const analyserRef = useRef<AnalyserNode>(null!);
+  const audioRef = useRef<HTMLAudioElement>(null!);
   const angleCountRef = useRef(6);
   const colorRef = useRef("#ff0000");
   const penSizeRef = useRef(2);

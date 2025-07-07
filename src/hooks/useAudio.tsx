@@ -1,9 +1,9 @@
 import { RefObject } from "react";
 
 interface UseAudioProps {
-  audioRef: RefObject<HTMLAudioElement | null>;
-  audioCtxRef: RefObject<AudioContext | null>;
-  analyserRef: RefObject<AnalyserNode | null>;
+  audioRef: RefObject<HTMLAudioElement>;
+  audioCtxRef: RefObject<AudioContext>;
+  analyserRef: RefObject<AnalyserNode>;
   fileInputRef: RefObject<HTMLInputElement>;
   setIsAudioUploaded: (value: boolean) => void;
   setIsVibingState: (value: boolean) => void;

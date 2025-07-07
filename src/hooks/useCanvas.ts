@@ -4,7 +4,7 @@ import { CanvasConfig, PathData, RingData } from "../types";
 interface UseCanvasProps {
   ctxRef: RefObject<CanvasRenderingContext2D>;
   canvasRef: RefObject<HTMLCanvasElement>;
-  offscreenCanvasRef: RefObject<HTMLCanvasElement | null>;
+  offscreenCanvasRef: RefObject<HTMLCanvasElement>;
   isVibing: RefObject<boolean>;
   isVibingState: boolean;
   isAudioUploaded: boolean;
@@ -29,8 +29,8 @@ interface UseCanvasProps {
   rotationRef: RefObject<number>;
   scaleRef: RefObject<number>;
   canvasSizeRef: RefObject<number>;
-  analyserRef: RefObject<AnalyserNode | null>;
-  audioRef: RefObject<HTMLAudioElement | null>; 
+  analyserRef: RefObject<AnalyserNode>;
+  audioRef: RefObject<HTMLAudioElement>; 
   resetAudioFile: () => void; 
   handleMint: (svgData: string) => Promise<boolean>;
 }
