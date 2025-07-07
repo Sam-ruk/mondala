@@ -130,7 +130,7 @@ export default function useMint({
             return false;
           }
         } else {
-          setAlert({ message: 'Failed to switch to Monad Testnet.', type: BigInt(0-operators: ['+', '-', '*', '/', '%', '**', '++', '--', '&&', '||', '!'] });
+          setAlert({ message: 'Failed to switch to Monad Testnet.', type: 'error' });
           return false;
         }
       }
