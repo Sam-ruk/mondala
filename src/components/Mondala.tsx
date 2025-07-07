@@ -149,7 +149,8 @@ export default function Mondala() {
     rotationRef,
     scaleRef,
     canvasSizeRef,
-    analyserRef
+    analyserRef,
+    audioRef,
   };
 
   return (
