@@ -1,5 +1,5 @@
 import { Connector, useAccount, useConnect, useSwitchChain, useWriteContract } from 'wagmi';
-import { PublicClient } from 'viem';
+import { PublicClient, getAddress } from 'viem'; // Add getAddress for address validation
 import { monadTestnet } from '../wagmiConfig';
 
 interface UseMintProps {
@@ -12,9 +12,9 @@ interface UseMintProps {
   writeContractAsync: ReturnType<typeof useWriteContract>['writeContractAsync'];
   isPending: boolean;
   setAlert: (alert: { message: string; type: 'success' | 'error' } | null) => void;
-  CONTRACT_ADDRESS: string;
+  CONTRACT_ADDRESS: `0x${string}`; // Changed from string to `0x${string}`
   CHAIN_ID: number;
-  SVGNFTABI: any;
+  SVGNFTABI: any; // Consider typing this properly with Abi type
   publicClient: PublicClient;
 }
 
@@ -36,6 +36,18 @@ export default function useMint({
   const handleMint = async (svgData: string) => {
     setAlert(null);
     console.log('Starting mint process...', { isConnected, address });
+
+    if (!svgData || typeof svgData !== 'string') {
+      console.error('Invalid SVG data');
+      setAlert({ message: 'Invalid SVG data provided.', type: 'error' });
+      return false;
+    }
+
+    if (!connectors.length) {
+      console.error('No connectors available');
+      setAlert({ message: 'No wallet connectors available. Please check your configuration.', type: 'error' });
+      return false;
+    }
 
     if (!isConnected) {
       if (!window.ethereum) {
@@ -75,7 +87,7 @@ export default function useMint({
     }
 
     console.log('Current chain ID:', chainId, 'Target chain ID:', CHAIN_ID);
-    if (chainId !== CHAIN_ID) {
+    if (chainId === undefined || chainId !== CHAIN_ID) {
       if (!window.ethereum) {
         console.error('No wallet provider detected for chain switch');
         setAlert({ message: 'Wallet provider not detected. Please ensure MetaMask is installed.', type: 'error' });
@@ -118,7 +130,7 @@ export default function useMint({
             return false;
           }
         } else {
-          setAlert({ message: 'Failed to switch to Monad Testnet.', type: 'error' });
+          setAlert({ message: 'Failed to switch to Monad Testnet.', type: BigInt(0-operators: ['+', '-', '*', '/', '%', '**', '++', '--', '&&', '||', '!'] });
           return false;
         }
       }
@@ -129,65 +141,70 @@ export default function useMint({
       setAlert({ message: 'No valid wallet address. Please connect your wallet.', type: 'error' });
       return false;
     }
-    
+
+    try {
+      getAddress(CONTRACT_ADDRESS);
+    } catch (error) {
+      console.error('Invalid contract address:', CONTRACT_ADDRESS);
+      setAlert({ message: 'Invalid contract address provided.', type: 'error' });
+      return false;
+    }
+
     // Mint NFT
     try {
       setAlert({ message: 'Estimating gas...', type: 'success' });
       console.log('Estimating gas for safeMint:', { address, CONTRACT_ADDRESS, svgData });
-      const estimatedGas = await publicClient.estimateContractGas({
-        address: CONTRACT_ADDRESS as `0x${string}`,
-        abi: SVGNFTABI,
-        functionName: 'safeMint',
-        args: [address, svgData],
-        value: BigInt(0.001 * 10**18),
-        account: address,
-      });
-      const gasLimit = BigInt(Math.floor(Number(estimatedGas) * 1.2));
-      setAlert({ message: 'Minting NFT...', type: 'success' });
-      console.log('Writing contract with gas limit:', gasLimit);
-      await writeContractAsync({
-        address: CONTRACT_ADDRESS as `0x${string}`,
-        abi: SVGNFTABI,
-        functionName: 'safeMint',
-        args: [address, svgData],
-        value: BigInt(0.001 * 10**18),
-        gas: gasLimit,
-      });
-      setAlert({ message: 'NFT minted successfully!', type: 'success' });
-      return true;
-    } catch (gasError: any) {
-      console.error('Gas estimation or minting error:', gasError);
-      if (gasError?.message?.includes('User rejected the request')) {
-        setAlert({ message: 'Transaction cancelled. Please approve the transaction in your wallet to mint the NFT.', type: 'error' });
-        return false;
-      }
-      setAlert({ message: 'Gas estimation failed, trying with fixed gas limit...', type: 'error' });
+      let gasLimit: bigint;
       try {
-        await writeContractAsync({
-          address: CONTRACT_ADDRESS as `0x${string}`,
+        const estimatedGas = await publicClient.estimateContractGas({
+          address: CONTRACT_ADDRESS,
           abi: SVGNFTABI,
           functionName: 'safeMint',
           args: [address, svgData],
           value: BigInt(0.001 * 10**18),
-          gas: BigInt(100000000),
+          account: address,
         });
+        gasLimit = BigInt(Math.floor(Number(estimatedGas) * 1.2));
+      } catch (gasEstimationError: any) {
+        console.warn('Gas estimation failed, using default gas limit:', gasEstimationError);
+        gasLimit = BigInt(100000000); 
+      }
+
+      setAlert({ message: 'Minting NFT...', type: 'success' });
+      console.log('Writing contract with gas limit:', gasLimit);
+      const txHash = await writeContractAsync({
+        address: CONTRACT_ADDRESS,
+        abi: SVGNFTABI,
+        functionName: 'safeMint',
+        args: [address, svgData],
+        value: BigInt(0.001 * 10**18), //0.001 MON
+        gas: gasLimit,
+      });
+
+      setAlert({ message: 'Waiting for transaction confirmation...', type: 'success' });
+      const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
+      if (receipt.status === 'success') {
         setAlert({ message: 'NFT minted successfully!', type: 'success' });
         return true;
-      } catch (fallbackError: any) {
-        console.error('Fallback minting error:', fallbackError);
-        if (fallbackError?.message?.includes('User rejected the request')) {
-          setAlert({ message: 'Transaction cancelled. Please approve the transaction in your wallet to mint the NFT.', type: 'error' });
-          return false;
-        }
-        let errorMessage = 'Minting failed with fallback gas limit';
-        if (fallbackError.message?.includes('out of gas')) {
-          errorMessage = 'Transaction failed: Out of gas. Try increasing gas limit.';
-        } else if (fallbackError.message) {
-          errorMessage = fallbackError.message;
-        }
-        setAlert({ message: errorMessage, type: 'error' });
+      } else {
+        console.error('Transaction failed:', receipt);
+        setAlert({ message: 'Transaction failed. Please try again.', type: 'error' });
         return false;
       }
+    } catch (mintError: any) {
+      console.error('Minting error:', mintError);
+      if (mintError?.message?.includes('User rejected the request')) {
+        setAlert({ message: 'Transaction cancelled. Please approve the transaction in your wallet to mint the NFT.', type: 'error' });
+        return false;
+      }
+      let errorMessage = 'Minting failed';
+      if (mintError.message?.includes('out of gas')) {
+        errorMessage = 'Transaction failed: Out of gas. Try increasing gas limit.';
+      } else if (mintError.message) {
+        errorMessage = mintError.message;
+      }
+      setAlert({ message: errorMessage, type: 'error' });
+      return false;
     }
   };
 
