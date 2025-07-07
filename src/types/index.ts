@@ -34,3 +34,11 @@ export interface CanvasConfig {
   canvasSizeRef: MutableRefObject<number>;
   analyserRef: MutableRefObject<AnalyserNode | null>;
 }
+
+export interface RingData {
+ index: number;
+ innerRadius: number;
+ outerRadius: number;
+ rotationSpeed: number;
+ rotationDirection: number;
+}
