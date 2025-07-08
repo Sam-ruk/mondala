@@ -493,9 +493,11 @@ export default function useCanvas({
       const centerX = canvasSize / 2;
       const centerY = canvasSize / 2;
       if (isPointInActiveRing(x, y, centerX, centerY)) {
+        console.log('Point in active ring');
         mousePos.current = { x, y, lastX: mousePos.current.x, lastY: mousePos.current.y };
         needsDraw.current = true;
       } else {
+        console.log('Point not in active ring');
         isDrawing.current = false;
       }
     };
