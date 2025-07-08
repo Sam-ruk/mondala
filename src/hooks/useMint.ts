@@ -16,6 +16,7 @@ interface UseMintProps {
   CHAIN_ID: number;
   SVGNFTABI: any;
   publicClient: PublicClient;
+  refreshAccount: () => { address: `0x${string}` | undefined; isConnected: boolean };
 }
 
 export default function useMint({
@@ -32,6 +33,7 @@ export default function useMint({
   CHAIN_ID,
   SVGNFTABI,
   publicClient,
+  refreshAccount
 }: UseMintProps) {
   const connectAndMint = async (svgData: string) => {
     setAlert(null);
@@ -71,8 +73,10 @@ export default function useMint({
         setAlert({ message: 'Connecting wallet... Please approve in your wallet.', type: 'success' });
         await connect({ connector });
 
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        const { address: newAddress, isConnected: newIsConnected } = useAccount();
+        // Wait and refresh account state
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        const { address: newAddress, isConnected: newIsConnected } = refreshAccount();
+        
         if (!newIsConnected || !newAddress) {
           console.error('Wallet connection failed or timed out');
           setAlert({ message: 'Wallet connection failed. Please try again or ensure your wallet is unlocked.', type: 'error' });

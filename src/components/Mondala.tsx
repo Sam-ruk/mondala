@@ -55,6 +55,14 @@ export default function Mondala() {
   const { switchChainAsync } = useSwitchChain();
   const { writeContractAsync, isPending: isMinting } = useWriteContract(); 
 
+  const accountRef = useRef({ address, isConnected });
+  
+  useEffect(() => {
+    accountRef.current = { address, isConnected };
+  }, [address, isConnected]);
+
+  const refreshAccount = () => accountRef.current;
+
   const { connectAndMint } = useMint({
     address,
     isConnected,
@@ -68,7 +76,8 @@ export default function Mondala() {
     CONTRACT_ADDRESS,
     CHAIN_ID,
     SVGNFTABI,
-    publicClient
+    publicClient,
+    refreshAccount
   });
 
   const { handleAudioUpload } = useAudio({
