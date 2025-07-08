@@ -467,6 +467,7 @@ export default function useCanvas({
       return { x, y };
     };
     const handleMouseDown = (e: MouseEvent) => {
+      console.log('Mouse Down Detected');
       const { x, y } = getCanvasCoordinates(e);
       const canvasSize = canvasSizeRef.current;
       const centerX = canvasSize / 2;
@@ -480,10 +481,12 @@ export default function useCanvas({
       }
     };
     const handleMouseUp = () => {
+      console.log('Mouse Up Detected');
       isDrawing.current = false;
       needsDraw.current = true;
     };
     const handleMouseMove = (e: MouseEvent) => {
+      console.log('Mouse Move Detected');
       if (!isDrawing.current) return;
       const { x, y } = getCanvasCoordinates(e);
       const canvasSize = canvasSizeRef.current;
