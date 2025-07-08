@@ -30,9 +30,9 @@ interface UseCanvasProps {
   scaleRef: RefObject<number>;
   canvasSizeRef: RefObject<number>;
   analyserRef: RefObject<AnalyserNode>;
-  audioRef: RefObject<HTMLAudioElement>; 
-  resetAudioFile: () => void; 
-  handleMint: (svgData: string) => Promise<boolean>;
+  audioRef: RefObject<HTMLAudioElement>;
+  resetAudioFile: () => void;
+  connectAndMint: (svgData: string) => Promise<boolean>;
 }
 
 export default function useCanvas({
@@ -66,7 +66,7 @@ export default function useCanvas({
   analyserRef,
   audioRef, 
   resetAudioFile, 
-  handleMint
+  connectAndMint
 }: UseCanvasProps) {
   const drawConcentricCircles = (ctx: CanvasRenderingContext2D) => {
     if (isVibing.current) return;
@@ -320,7 +320,7 @@ export default function useCanvas({
     if (!ctxRef.current || !offscreenCanvasRef.current) return;
     const animatedSVG = await createIsolatedRingSVG();
     if (animatedSVG) {
-      await handleMint(animatedSVG);
+      await connectAndMint(animatedSVG);
       downloadSVG(animatedSVG, "mandala_isolated_rings.svg");
     }
   };

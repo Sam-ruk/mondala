@@ -1,5 +1,5 @@
 import { Connector, useAccount, useConnect, useSwitchChain, useWriteContract } from 'wagmi';
-import { PublicClient, getAddress } from 'viem'; // Add getAddress for address validation
+import { PublicClient, getAddress } from 'viem';
 import { monadTestnet } from '../wagmiConfig';
 
 interface UseMintProps {
@@ -12,9 +12,9 @@ interface UseMintProps {
   writeContractAsync: ReturnType<typeof useWriteContract>['writeContractAsync'];
   isPending: boolean;
   setAlert: (alert: { message: string; type: 'success' | 'error' } | null) => void;
-  CONTRACT_ADDRESS: `0x${string}`; // Changed from string to `0x${string}`
+  CONTRACT_ADDRESS: `0x${string}`;
   CHAIN_ID: number;
-  SVGNFTABI: any; // Consider typing this properly with Abi type
+  SVGNFTABI: any;
   publicClient: PublicClient;
 }
 
@@ -33,9 +33,9 @@ export default function useMint({
   SVGNFTABI,
   publicClient,
 }: UseMintProps) {
-  const handleMint = async (svgData: string) => {
+  const connectAndMint = async (svgData: string) => {
     setAlert(null);
-    console.log('Starting mint process...', { isConnected, address });
+    console.log('Starting connect and mint process...', { isConnected, address });
 
     if (!svgData || typeof svgData !== 'string') {
       console.error('Invalid SVG data');
@@ -49,15 +49,16 @@ export default function useMint({
       return false;
     }
 
-    if (!isConnected) {
+    // Connect wallet
+    if (!isConnected || !address) {
       if (!window.ethereum) {
         console.error('No wallet detected');
         setAlert({ message: 'No wallet detected. Please install MetaMask or another compatible wallet.', type: 'error' });
         return false;
       }
 
-      const connector = connectors.find(c => c.id === 'metaMask') || 
-                       connectors.find(c => c.id === 'injected') || 
+      const connector = connectors.find(c => c.id === 'metaMask') ||
+                       connectors.find(c => c.id === 'injected') ||
                        connectors[0];
       if (!connector) {
         console.error('No supported wallet connector found', { connectors: connectors.map(c => c.id) });
@@ -69,16 +70,17 @@ export default function useMint({
         console.log('Attempting to connect with connector:', connector.id);
         setAlert({ message: 'Connecting wallet... Please approve in your wallet.', type: 'success' });
         await connect({ connector });
-        console.log('Wallet connection initiated, waiting for confirmation...');
 
-        if (!isConnected) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        const { address: newAddress, isConnected: newIsConnected } = useAccount();
+        if (!newIsConnected || !newAddress) {
           console.error('Wallet connection failed or timed out');
-          // setAlert({ message: 'Wallet connection failed. Please try again or ensure your wallet is unlocked.', type: 'error' });
+          setAlert({ message: 'Wallet connection failed. Please try again or ensure your wallet is unlocked.', type: 'error' });
           return false;
         }
-
-        console.log('Wallet connected, address:', address);
+        console.log('Wallet connected, address:', newAddress);
         setAlert({ message: 'Wallet connected successfully.', type: 'success' });
+        address = newAddress;
       } catch (connectError: any) {
         console.error('Wallet connection error:', connectError);
         setAlert({ message: 'Failed to connect wallet.', type: 'error' });
@@ -86,8 +88,9 @@ export default function useMint({
       }
     }
 
+    // Switch chain
     console.log('Current chain ID:', chainId, 'Target chain ID:', CHAIN_ID);
-    if (chainId === undefined || chainId !== CHAIN_ID) {
+    if (chainId !== CHAIN_ID) {
       if (!window.ethereum) {
         console.error('No wallet provider detected for chain switch');
         setAlert({ message: 'Wallet provider not detected. Please ensure MetaMask is installed.', type: 'error' });
@@ -116,14 +119,8 @@ export default function useMint({
               ],
             });
             console.log('Chain added, attempting to switch again');
-            try {
-              await switchChainAsync({ chainId: CHAIN_ID });
-              setAlert({ message: 'Switched to Monad Testnet after adding chain.', type: 'success' });
-            } catch (retryError) {
-              console.error('Retry switch error:', retryError);
-              setAlert({ message: 'Monad Testnet added to wallet. Please switch to it manually in your wallet.', type: 'error' });
-              return false;
-            }
+            await switchChainAsync({ chainId: CHAIN_ID });
+            setAlert({ message: 'Switched to Monad Testnet after adding chain.', type: 'success' });
           } catch (addChainError: any) {
             console.error('Add chain error:', addChainError);
             setAlert({ message: 'Failed to add Monad Testnet.', type: 'error' });
@@ -167,7 +164,7 @@ export default function useMint({
         gasLimit = BigInt(Math.floor(Number(estimatedGas) * 1.2));
       } catch (gasEstimationError: any) {
         console.warn('Gas estimation failed, using default gas limit:', gasEstimationError);
-        gasLimit = BigInt(100000000) // High gas
+        gasLimit = BigInt(100000000); // High gas
       }
 
       setAlert({ message: 'Minting NFT...', type: 'success' });
@@ -177,7 +174,7 @@ export default function useMint({
         abi: SVGNFTABI,
         functionName: 'safeMint',
         args: [address, svgData],
-        value: BigInt(0.001 * 10**18), //0.001 MON
+        value: BigInt(0.001 * 10**18),
         gas: gasLimit,
       });
 
@@ -208,5 +205,5 @@ export default function useMint({
     }
   };
 
-  return { handleMint };
+  return { connectAndMint };
 }

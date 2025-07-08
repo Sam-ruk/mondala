@@ -142,11 +142,11 @@ export default function Controls({
           Clear Selected Ring
         </button>
         <button
-          className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded text-sm font-medium transition-colors disabled:opacity-50"
+          className={`bg-purple-600 text-white px-3 py-2 rounded text-sm font-medium transition-colors ${isMinting ? "opacity-50 cursor-not-allowed" : "hover:bg-purple-700"}`}
           onClick={saveAndMint}
           disabled={isMinting}
         >
-          {isMinting ? "Minting..." : "Save & Mint"}
+          {isMinting ? "Processing..." : "Save & Mint"}
         </button>
       </div>
     </div>

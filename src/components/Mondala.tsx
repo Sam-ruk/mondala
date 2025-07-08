@@ -27,6 +27,7 @@ export default function Mondala() {
   const [ringCount, setRingCount] = useState(5);
   const [isAudioUploaded, setIsAudioUploaded] = useState(false);
   const [alert, setAlert] = useState<AlertState>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const canvasRef = useRef<HTMLCanvasElement>(null!);
   const offscreenCanvasRef = useRef<HTMLCanvasElement>(null!);
@@ -54,7 +55,7 @@ export default function Mondala() {
   const { switchChainAsync } = useSwitchChain();
   const { writeContractAsync, isPending: isMinting } = useWriteContract(); 
 
-  const { handleMint } = useMint({
+  const { connectAndMint } = useMint({
     address,
     isConnected,
     chainId,
@@ -129,8 +130,18 @@ export default function Mondala() {
     analyserRef,
     audioRef,
     resetAudioFile,
-    handleMint
+    connectAndMint
   });
+
+  const handleConnectAndMint = async () => {
+    if (isProcessing) return; // Prevent multiple clicks
+    setIsProcessing(true);
+    try {
+      await saveAndMint();
+    } finally {
+      setIsProcessing(false);
+    }
+  };
 
   const canvasConfig: CanvasConfig = {
     canvasRef,
@@ -194,8 +205,8 @@ export default function Mondala() {
         clearCanvas={clearCanvas}
         toggleVibe={toggleVibe}
         clearSelectedRing={clearSelectedRing}
-        saveAndMint={saveAndMint}
-        isMinting={isMinting} 
+        saveAndMint={handleConnectAndMint}
+        isMinting={isProcessing} 
         isVibingState={isVibingState}
       />
     </div>
