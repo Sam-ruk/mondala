@@ -92,14 +92,17 @@ export default function useCanvas({
   };
 
   const isPointInActiveRing = (x: number, y: number, centerX: number, centerY: number) => {
-    const dx = x - centerX;
-    const dy = y - centerY;
-    const distance = Math.sqrt(dx * dx + dy * dy);
-    const canvasSize = canvasSizeRef.current;
-    const innerRadius = (activeRingRef.current - 1) * (canvasSize / (2 * ringCountRef.current));
-    const outerRadius = activeRingRef.current * (canvasSize / (2 * ringCountRef.current));
-    return distance >= innerRadius && distance <= outerRadius;
-  };
+  const dx = x - centerX;
+  const dy = y - centerY;
+  const distance = Math.sqrt(dx * dx + dy * dy);
+  const canvasSize = canvasSizeRef.current;
+  const innerRadius = (activeRingRef.current - 1) * (canvasSize / (2 * ringCountRef.current));
+  const outerRadius = activeRingRef.current * (canvasSize / (2 * ringCountRef.current));
+  const isInRing = distance >= innerRadius && distance <= outerRadius;
+  console.log(`Device: ${navigator.userAgent}`);
+  console.log(`Mouse/Touch: (${x}, ${y}), Distance: ${distance}, Inner: ${innerRadius}, Outer: ${outerRadius}, InRing: ${isInRing}`);
+  return isInRing;
+};
 
   const drawWithSymmetry = (ctx: CanvasRenderingContext2D, x1: number, y1: number, x2: number, y2: number, color: string, lineWidth: number, ring: number) => {
     const canvasSize = canvasSizeRef.current;
@@ -323,58 +326,58 @@ export default function useCanvas({
   };
 
   const resize = () => {
-    const dpr = window.devicePixelRatio || 1;
-    const canvas = canvasRef.current;
-    const offscreenCanvas = offscreenCanvasRef.current;
-    if (!canvas || !offscreenCanvas) return;
-    const ctx = canvas.getContext("2d");
-    const offscreenCtx = offscreenCanvas.getContext("2d");
-    if (!ctx || !offscreenCtx) return;
-    const windowWidth = window.innerWidth;
-    const windowHeight = window.innerHeight;
-    const size = Math.min(windowWidth, windowHeight) * 0.8;
-    const canvasSize = Math.round(size);
-    canvasSizeRef.current = canvasSize;
-    canvas.width = canvasSize * dpr;
-    canvas.height = canvasSize * dpr;
-    offscreenCanvas.width = canvasSize * dpr;
-    offscreenCanvas.height = canvasSize * dpr;
-    canvas.style.width = `${canvasSize}px`;
-    canvas.style.height = `${canvasSize}px`;
-    canvas.style.borderRadius = "50%";
-    ctx.resetTransform();
-    ctx.scale(dpr, dpr);
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-    ctx.globalCompositeOperation = "source-over";
-    ctx.fillStyle = "#000";
-    offscreenCtx.resetTransform();
-    offscreenCtx.scale(dpr, dpr);
-    offscreenCtx.lineCap = "round";
-    offscreenCtx.lineJoin = "round";
-    offscreenCtx.globalCompositeOperation = "source-over";
-    offscreenCtx.clearRect(0, 0, canvasSize, canvasSize);
-    const centerX = canvasSize / 2;
-    const centerY = canvasSize / 2;
-    pathDataRef.current.forEach(({ x1, y1, x2, y2, color, lineWidth, ring }) => {
-      offscreenCtx.save();
-      offscreenCtx.beginPath();
-      offscreenCtx.arc(centerX, centerY, ring * (canvasSize / (2 * ringCountRef.current)), 0, 2 * Math.PI);
-      if (ring > 1) {
-        offscreenCtx.arc(centerX, centerY, (ring - 1) * (canvasSize / (2 * ringCountRef.current)), 0, 2 * Math.PI, true);
-      }
-      offscreenCtx.clip();
-      drawWithSymmetry(offscreenCtx, x1 * canvasSize, y1 * canvasSize, x2 * canvasSize, y2 * canvasSize, color, lineWidth, ring);
-      offscreenCtx.restore();
-    });
-    ctx.clearRect(0, 0, canvasSize, canvasSize);
-    ctx.fillRect(0, 0, canvasSize, canvasSize);
-    if (!isVibing.current) {
-      drawConcentricCircles(ctx);
+  const dpr = window.devicePixelRatio || 1;
+  const canvas = canvasRef.current;
+  const offscreenCanvas = offscreenCanvasRef.current;
+  if (!canvas || !offscreenCanvas) return;
+  const ctx = canvas.getContext("2d");
+  const offscreenCtx = offscreenCanvas.getContext("2d");
+  if (!ctx || !offscreenCtx) return;
+  const windowWidth = window.innerWidth;
+  const windowHeight = window.innerHeight;
+  const size = Math.min(windowWidth, windowHeight) * 0.8;
+  const canvasSize = Math.round(size);
+  canvasSizeRef.current = canvasSize;
+  canvas.width = canvasSize * dpr;
+  canvas.height = canvasSize * dpr;
+  offscreenCanvas.width = canvasSize * dpr;
+  offscreenCanvas.height = canvasSize * dpr;
+  canvas.style.width = `${canvasSize}px`;
+  canvas.style.height = `${canvasSize}px`;
+  canvas.style.borderRadius = "50%";
+  ctx.setTransform(1, 0, 0, 1, 0, 0); // not resetTransform
+  ctx.scale(dpr, dpr);
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  ctx.globalCompositeOperation = "source-over";
+  ctx.fillStyle = "#000";
+  offscreenCtx.setTransform(1, 0, 0, 1, 0, 0); 
+  offscreenCtx.scale(dpr, dpr);
+  offscreenCtx.lineCap = "round";
+  offscreenCtx.lineJoin = "round";
+  offscreenCtx.globalCompositeOperation = "source-over";
+  offscreenCtx.clearRect(0, 0, canvasSize, canvasSize);
+  const centerX = canvasSize / 2;
+  const centerY = canvasSize / 2;
+  pathDataRef.current.forEach(({ x1, y1, x2, y2, color, lineWidth, ring }) => {
+    offscreenCtx.save();
+    offscreenCtx.beginPath();
+    offscreenCtx.arc(centerX, centerY, ring * (canvasSize / (2 * ringCountRef.current)), 0, 2 * Math.PI);
+    if (ring > 1) {
+      offscreenCtx.arc(centerX, centerY, (ring - 1) * (canvasSize / (2 * ringCountRef.current)), 0, 2 * Math.PI, true);
     }
-    ctx.drawImage(offscreenCanvas, 0, 0, canvasSize, canvasSize);
-    needsDraw.current = true;
-  };
+    offscreenCtx.clip();
+    drawWithSymmetry(offscreenCtx, x1 * canvasSize, y1 * canvasSize, x2 * canvasSize, y2 * canvasSize, color, lineWidth, ring);
+    offscreenCtx.restore();
+  });
+  ctx.clearRect(0, 0, canvasSize, canvasSize);
+  ctx.fillRect(0, 0, canvasSize, canvasSize);
+  if (!isVibing.current) {
+    drawConcentricCircles(ctx);
+  }
+  ctx.drawImage(offscreenCanvas, 0, 0, canvasSize, canvasSize);
+  needsDraw.current = true;
+};
 
   const draw = () => {
     if (!ctxRef.current || !canvasRef.current || !offscreenCanvasRef.current) return;
@@ -459,45 +462,66 @@ export default function useCanvas({
     offscreenCanvasRef.current = offscreenCanvas;
     resize();
     window.addEventListener("resize", resize);
-    const getCanvasCoordinates = (e: MouseEvent) => {
+
+    const getCanvasCoordinates = (e: MouseEvent | TouchEvent) => {
       const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
       const canvasSize = canvasSizeRef.current;
-      const x = ((e.clientX - rect.left) * canvasSize) / rect.width;
-      const y = ((e.clientY - rect.top) * canvasSize) / rect.height;
+      let clientX, clientY;
+      if (e instanceof MouseEvent) {
+        clientX = e.clientX;
+        clientY = e.clientY;
+      } else {
+        // Handle touch 
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+        e.preventDefault(); // Prevent scrolling/zooming
+      }
+
+      const xPhysical = (clientX - rect.left) * (canvas.width / rect.width);
+      const yPhysical = (clientY - rect.top) * (canvas.height / rect.height);
+      const x = xPhysical / dpr;
+      const y = yPhysical / dpr;
       return { x, y };
     };
-    const handleMouseDown = (e: MouseEvent) => {
-      console.log('Mouse Down Detected');
+
+    const handleMouseDown = (e: MouseEvent | TouchEvent) => {
+      console.log(`Event triggered: ${e.type}`); 
       const { x, y } = getCanvasCoordinates(e);
       const canvasSize = canvasSizeRef.current;
       const centerX = canvasSize / 2;
       const centerY = canvasSize / 2;
       if (isPointInActiveRing(x, y, centerX, centerY)) {
+        console.log("Point in active ring");
         isDrawing.current = true;
         isVibing.current = false;
         setIsVibingState(false);
         mousePos.current = { x, y, lastX: x, lastY: y };
         needsDraw.current = true;
+      } else {
+        console.log("Point not in active ring");
       }
     };
-    const handleMouseUp = () => {
-      console.log('Mouse Up Detected');
+
+    const handleMouseUp = (e: MouseEvent | TouchEvent) => {
+      console.log(`Event triggered: ${e.type}`); 
       isDrawing.current = false;
       needsDraw.current = true;
     };
-    const handleMouseMove = (e: MouseEvent) => {
-      console.log('Mouse Move Detected');
+
+    const handleMouseMove = (e: MouseEvent | TouchEvent) => {
+      console.log(`Event triggered: ${e.type}`); 
       if (!isDrawing.current) return;
       const { x, y } = getCanvasCoordinates(e);
       const canvasSize = canvasSizeRef.current;
       const centerX = canvasSize / 2;
       const centerY = canvasSize / 2;
       if (isPointInActiveRing(x, y, centerX, centerY)) {
-        console.log('Point in active ring');
+        console.log("Point in active ring during move");
         mousePos.current = { x, y, lastX: mousePos.current.x, lastY: mousePos.current.y };
         needsDraw.current = true;
       } else {
-        console.log('Point not in active ring');
+        console.log("Point not in active ring during move");
         isDrawing.current = false;
       }
     };
@@ -518,14 +542,23 @@ export default function useCanvas({
       requestAnimationFrame(animate);
     };
     animate();
+
     canvas.addEventListener("mousedown", handleMouseDown);
     canvas.addEventListener("mouseup", handleMouseUp);
     canvas.addEventListener("mousemove", handleMouseMove);
+
+    canvas.addEventListener("touchstart", handleMouseDown);
+    canvas.addEventListener("touchend", handleMouseUp);
+    canvas.addEventListener("touchmove", handleMouseMove);
+
     return () => {
       window.removeEventListener("resize", resize);
       canvas.removeEventListener("mousedown", handleMouseDown);
       canvas.removeEventListener("mouseup", handleMouseUp);
       canvas.removeEventListener("mousemove", handleMouseMove);
+      canvas.removeEventListener("touchstart", handleMouseDown);
+      canvas.removeEventListener("touchend", handleMouseUp);
+      canvas.removeEventListener("touchmove", handleMouseMove);
       if (audioRef.current) {
         audioRef.current.removeEventListener("ended", handleAudioEnd);
       }
