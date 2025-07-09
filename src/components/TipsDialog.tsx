@@ -141,7 +141,6 @@ const TipsDialog: React.FC<TipsDialogProps> = ({ isOpen, onClose }) => {
                     <video
                       key={tip.id}
                       src={tip.videoUrl}
-                      alt={tip.title}
                       autoPlay
                       loop
                       muted
