@@ -6,6 +6,7 @@ import { wagmiConfig, publicClient } from '../wagmiConfig';
 import Controls from "./Controls";
 import Canvas from "./Canvas";
 import Alert from "./Alert";
+import TipsDialog from './TipsDialog';
 import useCanvas from "../hooks/useCanvas";
 import useAudio from "../hooks/useAudio";
 import useMint from "../hooks/useMint";
@@ -28,6 +29,7 @@ export default function Mondala() {
   const [isAudioUploaded, setIsAudioUploaded] = useState(false);
   const [alert, setAlert] = useState<AlertState>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isTipsDialogOpen, setIsTipsDialogOpen] = useState(true);
 
   const canvasRef = useRef<HTMLCanvasElement>(null!);
   const offscreenCanvasRef = useRef<HTMLCanvasElement>(null!);
@@ -260,8 +262,13 @@ export default function Mondala() {
         isMinting={isProcessing} 
         isVibingState={isVibingState}
         isConnected={isConnected}
+        showTips={() => setIsTipsDialogOpen(true)}
       />
     </div>
+    <TipsDialog 
+      isOpen={isTipsDialogOpen} 
+      onClose={() => setIsTipsDialogOpen(false)} 
+    />
   </div>
 );
 }

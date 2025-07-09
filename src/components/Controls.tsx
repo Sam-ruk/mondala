@@ -22,6 +22,7 @@ interface ControlsProps {
   isMinting: boolean;
   isVibingState: boolean; 
   isConnected: boolean;
+  showTips: () => void;
 }
 
 export default function Controls({
@@ -45,18 +46,33 @@ export default function Controls({
   saveAndMint,
   isMinting,
   isVibingState,
-  isConnected 
+  isConnected,
+  showTips 
 }: ControlsProps) {
   return (
     <div className={`container mt-4 sm:mt-0 sm:ml-6 bg-purple-100/90 p-4 sm:p-6 rounded-xl shadow-2xl shadow-purple-500/30 backdrop-blur-sm space-y-4 w-full max-w-sm min-w-0 relative ${isToolboxVisible ? "block" : "hidden"}`} style={{ transform: "none !important", maxHeight: "96vh", overflowY: "auto" }}>
-      <button
-        className="absolute top-2 right-2 bg-purple-600 text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-purple-700 transition-colors"
-        onClick={() => setIsToolboxVisible(false)}
-      >
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8 0-1.85.63-3.54 1.69-4.9l11.21 11.21C15.54 19.37 13.85 20 12 20zm6.31-3.1L7.1 5.69C8.46 4.63 10.15 4 12 4c4.41 0 8 3.59 8 8 0 1.85-.63 3.54-1.69 4.9z" fill="white"/>
-        </svg>
-      </button>
+      <div className="flex justify-between items-center mb-4">
+        <button
+          onClick={showTips}
+          className="bg-gradient-to-r from-purple-600 to-purple-700 text-white w-8 h-8 rounded-full flex items-center justify-center hover:from-purple-700 hover:to-purple-800 transition-all duration-200 shadow-lg"
+          title="Show Tips"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-6h2v6zm0-8h-2V7h2v4z" fill="white"/>
+          </svg>
+        </button>
+        
+        <button
+          className="bg-purple-600 text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-purple-700 transition-colors"
+          onClick={() => setIsToolboxVisible(false)}
+          title="Hide Controls"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8 0-1.85.63-3.54 1.69-4.9l11.21 11.21C15.54 19.37 13.85 20 12 20zm6.31-3.1L7.1 5.69C8.46 4.63 10.15 4 12 4c4.41 0 8 3.59 8 8 0 1.85-.63 3.54-1.69 4.9z" fill="white"/>
+          </svg>
+        </button>
+      </div>
+      
       <div className="space-y-1">
         <label className="block text-sm font-medium text-gray-700">Upload Audio</label>
         <input
@@ -148,7 +164,9 @@ export default function Controls({
           onClick={saveAndMint}
           disabled={isMinting}
         >
-          {isMinting ? "Processing..." : isConnected ? "Save & Mint" : "Connect to Mint"}
+          <span suppressHydrationWarning>
+            {isMinting ? "Processing..." : isConnected ? "Save & Mint" : "Connect to Mint"}
+          </span>
         </button>
       </div>
     </div>

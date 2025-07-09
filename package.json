@@ -12,6 +12,7 @@
   "dependencies": {
     "@wagmi/connectors": "^5.8.5",
     "@wagmi/core": "^2.17.3",
+    "lucide-react": "^0.525.0",
     "next": "15.3.4",
     "pino-pretty": "^13.0.0",
     "react": "^19.0.0",
