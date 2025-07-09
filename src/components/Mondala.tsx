@@ -56,7 +56,7 @@ export default function Mondala() {
   const { writeContractAsync, isPending: isMinting } = useWriteContract(); 
 
   const accountRef = useRef({ address, isConnected });
-  
+
   useEffect(() => {
     accountRef.current = { address, isConnected };
   }, [address, isConnected]);
@@ -146,7 +146,37 @@ export default function Mondala() {
     if (isProcessing) return; // Prevent multiple clicks
     setIsProcessing(true);
     try {
-      await saveAndMint();
+      if (!isConnected) {
+        if (!connectors.length) {
+          setAlert({ message: 'No wallet connectors available. Please check your configuration.', type: 'error' });
+          return;
+        }
+
+        if (!window.ethereum) {
+          setAlert({ message: 'No wallet detected. Please install MetaMask or another compatible wallet.', type: 'error' });
+          return;
+        }
+
+        const connector = connectors.find(c => c.id === 'metaMask') ||
+                         connectors.find(c => c.id === 'injected') ||
+                         connectors[0];
+        
+        if (!connector) {
+          setAlert({ message: 'No supported wallet found. Please install MetaMask or another compatible wallet.', type: 'error' });
+          return;
+        }
+
+        try {
+          setAlert({ message: 'Connecting wallet... Please approve in your wallet.', type: 'success' });
+          await connect({ connector });
+          setAlert({ message: 'Wallet connected successfully.', type: 'success' });
+        } catch (connectError) {
+          console.error('Wallet connection error:', connectError);
+          setAlert({ message: 'Failed to connect wallet.', type: 'error' });
+        }
+      } else {
+        await saveAndMint();
+      }
     } finally {
       setIsProcessing(false);
     }
@@ -217,6 +247,7 @@ export default function Mondala() {
         saveAndMint={handleConnectAndMint}
         isMinting={isProcessing} 
         isVibingState={isVibingState}
+        isConnected={isConnected}
       />
     </div>
   </div>

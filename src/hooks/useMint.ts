@@ -37,7 +37,7 @@ export default function useMint({
 }: UseMintProps) {
   const connectAndMint = async (svgData: string) => {
     setAlert(null);
-    console.log('Starting connect and mint process...', { isConnected, address });
+    console.log('Starting mint process...', { isConnected, address });
 
     if (!svgData || typeof svgData !== 'string') {
       console.error('Invalid SVG data');
@@ -45,51 +45,10 @@ export default function useMint({
       return false;
     }
 
-    if (!connectors.length) {
-      console.error('No connectors available');
-      setAlert({ message: 'No wallet connectors available. Please check your configuration.', type: 'error' });
-      return false;
-    }
-
-    // Connect wallet
     if (!isConnected || !address) {
-      if (!window.ethereum) {
-        console.error('No wallet detected');
-        setAlert({ message: 'No wallet detected. Please install MetaMask or another compatible wallet.', type: 'error' });
-        return false;
-      }
-
-      const connector = connectors.find(c => c.id === 'metaMask') ||
-                       connectors.find(c => c.id === 'injected') ||
-                       connectors[0];
-      if (!connector) {
-        console.error('No supported wallet connector found', { connectors: connectors.map(c => c.id) });
-        setAlert({ message: 'No supported wallet found. Please install MetaMask or another compatible wallet.', type: 'error' });
-        return false;
-      }
-
-      try {
-        console.log('Attempting to connect with connector:', connector.id);
-        setAlert({ message: 'Connecting wallet... Please approve in your wallet.', type: 'success' });
-        await connect({ connector });
-
-        // Wait and refresh account state
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        const { address: newAddress, isConnected: newIsConnected } = refreshAccount();
-        
-        if (!newIsConnected || !newAddress) {
-          console.error('Wallet connection failed or timed out');
-          // setAlert({ message: 'Wallet connection failed. Please try again or ensure your wallet is unlocked.', type: 'error' });
-          return false;
-        }
-        console.log('Wallet connected, address:', newAddress);
-        setAlert({ message: 'Wallet connected successfully.', type: 'success' });
-        address = newAddress;
-      } catch (connectError: any) {
-        console.error('Wallet connection error:', connectError);
-        setAlert({ message: 'Failed to connect wallet.', type: 'error' });
-        return false;
-      }
+      console.error('Wallet not connected');
+      setAlert({ message: 'Please connect your wallet first.', type: 'error' });
+      return false;
     }
 
     // Switch chain
@@ -135,12 +94,6 @@ export default function useMint({
           return false;
         }
       }
-    }
-
-    if (!address) {
-      console.error('No valid address provided for minting');
-      setAlert({ message: 'No valid wallet address. Please connect your wallet.', type: 'error' });
-      return false;
     }
 
     try {

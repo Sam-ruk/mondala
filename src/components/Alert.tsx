@@ -13,7 +13,7 @@ const Alert: React.FC<AlertProps> = ({ message, type, onClose }) => {
     const timer = setTimeout(() => {
       setIsVisible(false);
       onClose();
-    }, 10000);
+    }, 5000);
     return () => clearTimeout(timer);
   }, [onClose]);
 

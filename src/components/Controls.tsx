@@ -21,6 +21,7 @@ interface ControlsProps {
   saveAndMint: () => void;
   isMinting: boolean;
   isVibingState: boolean; 
+  isConnected: boolean;
 }
 
 export default function Controls({
@@ -43,7 +44,8 @@ export default function Controls({
   clearSelectedRing,
   saveAndMint,
   isMinting,
-  isVibingState 
+  isVibingState,
+  isConnected 
 }: ControlsProps) {
   return (
     <div className={`container mt-4 sm:mt-0 sm:ml-6 bg-purple-100/90 p-4 sm:p-6 rounded-xl shadow-2xl shadow-purple-500/30 backdrop-blur-sm space-y-4 w-full max-w-sm min-w-0 relative ${isToolboxVisible ? "block" : "hidden"}`} style={{ transform: "none !important", maxHeight: "96vh", overflowY: "auto" }}>
@@ -146,7 +148,7 @@ export default function Controls({
           onClick={saveAndMint}
           disabled={isMinting}
         >
-          {isMinting ? "Processing..." : "Save & Mint"}
+          {isMinting ? "Processing..." : isConnected ? "Save & Mint" : "Connect to Mint"}
         </button>
       </div>
     </div>
