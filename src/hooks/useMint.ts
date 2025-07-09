@@ -79,7 +79,7 @@ export default function useMint({
         
         if (!newIsConnected || !newAddress) {
           console.error('Wallet connection failed or timed out');
-          setAlert({ message: 'Wallet connection failed. Please try again or ensure your wallet is unlocked.', type: 'error' });
+          // setAlert({ message: 'Wallet connection failed. Please try again or ensure your wallet is unlocked.', type: 'error' });
           return false;
         }
         console.log('Wallet connected, address:', newAddress);
