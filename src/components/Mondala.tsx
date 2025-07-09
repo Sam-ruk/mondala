@@ -179,7 +179,7 @@ export default function Mondala() {
           }
         } catch (connectError) {
           console.error('Wallet connection error:', connectError);
-          if (connectError.message?.includes('User rejected')) {
+          if (connectError instanceof Error && connectError.message?.includes('User rejected')){
             setAlert({ message: 'Connection cancelled. Please approve the connection in your wallet.', type: 'error' });
           } else {
             setAlert({ message: 'Failed to connect wallet. Please try again.', type: 'error' });
