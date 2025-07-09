@@ -168,11 +168,11 @@ export default function Mondala() {
 
         try {
           setAlert({ message: 'Connecting wallet... Please approve in your wallet.', type: 'success' });
-          const result = await connect({ connector });
+          await connect({ connector });
           
-          await new Promise(resolve => setTimeout(resolve, 3000));
+          await new Promise(resolve => setTimeout(resolve, 2000));
           
-          if (result) {
+          if (accountRef.current.isConnected) {
             setAlert({ message: 'Wallet connected successfully! You can now mint your NFT.', type: 'success' });
           } else {
             setAlert({ message: 'Failed to connect wallet. Please try again.', type: 'error' });
