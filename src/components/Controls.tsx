@@ -9,18 +9,20 @@ interface ControlsProps {
   angleCount: number;
   penSize: number;
   activeRing: number;
+  rotationSensitivity: number; 
   handleAudioUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
   updateRingCount: (value: number) => void;
   updateAngleCount: (value: number) => void;
   updatePenSize: (value: number) => void;
   updateColor: (e: React.ChangeEvent<HTMLInputElement>) => void;
   updateActiveRing: (value: number) => void;
+  updateRotationSensitivity: (value: number) => void; 
   clearCanvas: () => void;
   toggleVibe: () => void;
   clearSelectedRing: () => void;
   saveAndMint: () => void;
   isMinting: boolean;
-  isVibingState: boolean; 
+  isVibingState: boolean;
   isConnected: boolean;
   showTips: () => void;
 }
@@ -34,12 +36,14 @@ export default function Controls({
   angleCount,
   penSize,
   activeRing,
+  rotationSensitivity,
   handleAudioUpload,
   updateRingCount,
   updateAngleCount,
   updatePenSize,
   updateColor,
   updateActiveRing,
+  updateRotationSensitivity,
   clearCanvas,
   toggleVibe,
   clearSelectedRing,
@@ -61,7 +65,6 @@ export default function Controls({
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-6h2v6zm0-8h-2V7h2v4z" fill="white"/>
           </svg>
         </button>
-        
         <button
           className="bg-purple-600 text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-purple-700 transition-colors"
           onClick={() => setIsToolboxVisible(false)}
@@ -72,7 +75,6 @@ export default function Controls({
           </svg>
         </button>
       </div>
-      
       <div className="space-y-1">
         <label className="block text-sm font-medium text-gray-700">Upload Audio</label>
         <input
@@ -134,6 +136,18 @@ export default function Controls({
           max={ringCount}
           value={activeRing}
           onChange={(e) => updateActiveRing(parseInt(e.target.value))}
+          className="w-full h-2 bg-purple-300 rounded-lg appearance-none cursor-pointer"
+        />
+      </div>
+      <div className="space-y-1">
+        <label className="block text-sm font-medium text-gray-700">Rotation Sensitivity: {(rotationSensitivity * 10000).toFixed(2)}</label>
+        <input
+          type="range"
+          min={0.00005}
+          max={0.0005}
+          step={0.00001}
+          value={rotationSensitivity}
+          onChange={(e) => updateRotationSensitivity(parseFloat(e.target.value))}
           className="w-full h-2 bg-purple-300 rounded-lg appearance-none cursor-pointer"
         />
       </div>

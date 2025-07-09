@@ -30,6 +30,8 @@ export default function Mondala() {
   const [alert, setAlert] = useState<AlertState>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isTipsDialogOpen, setIsTipsDialogOpen] = useState(true);
+  const [rotationSensitivity, setRotationSensitivity] = useState(0.0005);
+  const rotationSensitivityRef = useRef(0.0005);
 
   const canvasRef = useRef<HTMLCanvasElement>(null!);
   const offscreenCanvasRef = useRef<HTMLCanvasElement>(null!);
@@ -109,7 +111,8 @@ export default function Mondala() {
     updateActiveRing,
     updateRingCount,
     clearSelectedRing,
-    saveAndMint
+    saveAndMint,
+    updateRotationSensitivity
   } = useCanvas({
     ctxRef,
     canvasRef,
@@ -121,16 +124,19 @@ export default function Mondala() {
     penSize,
     activeRing,
     ringCount,
+    rotationSensitivity,
     setAngleCount,
     setPenSize,
     setActiveRing,
     setRingCount,
+    setRotationSensitivity,
     setIsVibingState,
     angleCountRef,
     colorRef,
     penSizeRef,
     activeRingRef,
     ringCountRef,
+    rotationSensitivityRef, 
     pathDataRef,
     mousePos,
     isDrawing,
@@ -249,17 +255,19 @@ export default function Mondala() {
         angleCount={angleCount}
         penSize={penSize}
         activeRing={activeRing}
+        rotationSensitivity={rotationSensitivity} 
         handleAudioUpload={handleAudioUpload}
         updateRingCount={updateRingCount}
         updateAngleCount={updateAngleCount}
         updatePenSize={updatePenSize}
         updateColor={updateColor}
         updateActiveRing={updateActiveRing}
+        updateRotationSensitivity={updateRotationSensitivity} 
         clearCanvas={clearCanvas}
         toggleVibe={toggleVibe}
         clearSelectedRing={clearSelectedRing}
         saveAndMint={handleConnectAndMint}
-        isMinting={isProcessing} 
+        isMinting={isProcessing}
         isVibingState={isVibingState}
         isConnected={isConnected}
         showTips={() => setIsTipsDialogOpen(true)}

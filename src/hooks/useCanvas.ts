@@ -12,16 +12,19 @@ interface UseCanvasProps {
   penSize: number;
   activeRing: number;
   ringCount: number;
+  rotationSensitivity: number; 
   setAngleCount: (value: number) => void;
   setPenSize: (value: number) => void;
   setActiveRing: (value: number) => void;
   setRingCount: (value: number) => void;
+  setRotationSensitivity: (value: number) => void; 
   setIsVibingState: (value: boolean) => void;
   angleCountRef: RefObject<number>;
   colorRef: RefObject<string>;
   penSizeRef: RefObject<number>;
   activeRingRef: RefObject<number>;
   ringCountRef: RefObject<number>;
+  rotationSensitivityRef: RefObject<number>; 
   pathDataRef: RefObject<PathData[]>;
   mousePos: RefObject<{ x: number; y: number; lastX: number; lastY: number }>;
   isDrawing: RefObject<boolean>;
@@ -46,16 +49,19 @@ export default function useCanvas({
   penSize,
   activeRing,
   ringCount,
+  rotationSensitivity,
   setAngleCount,
   setPenSize,
   setActiveRing,
   setRingCount,
+  setRotationSensitivity,
   setIsVibingState,
   angleCountRef,
   colorRef,
   penSizeRef,
   activeRingRef,
   ringCountRef,
+  rotationSensitivityRef,
   pathDataRef,
   mousePos,
   isDrawing,
@@ -64,10 +70,16 @@ export default function useCanvas({
   scaleRef,
   canvasSizeRef,
   analyserRef,
-  audioRef, 
-  resetAudioFile, 
+  audioRef,
+  resetAudioFile,
   connectAndMint
 }: UseCanvasProps) {
+  const updateRotationSensitivity = (value: number) => {
+    const cappedValue = Math.min(Math.max(value, 0.00005), 0.0005);
+    rotationSensitivityRef.current = cappedValue;
+    setRotationSensitivity(cappedValue);
+  };
+  
   const drawConcentricCircles = (ctx: CanvasRenderingContext2D) => {
     if (isVibing.current) return;
     ctx.save();
@@ -402,7 +414,7 @@ export default function useCanvas({
       ctx.fillRect(0, 0, canvasSize, canvasSize);
     }
     if (isVibing.current) {
-      rotationRef.current += amplitude * 0.0005;
+      rotationRef.current += amplitude * (rotationSensitivityRef.current ?? 0.0005);
       scaleRef.current = 1 + bass * 0.1;
       for (let ringIndex = 1; ringIndex <= ringCountRef.current; ringIndex++) {
         const innerRadius = (ringIndex - 1) * (canvasSize / (2 * ringCountRef.current));
@@ -574,6 +586,7 @@ export default function useCanvas({
     updateActiveRing,
     updateRingCount,
     clearSelectedRing,
-    saveAndMint
+    saveAndMint,
+    updateRotationSensitivity
   };
 }
