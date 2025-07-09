@@ -66,24 +66,31 @@ const tips: Tip[] = [
   },
   {
     id: 8,
-    title: "Hide",
-    description: "Hide the toolbox and enjoy the vibing art!",
-    videoUrl: "/videos/hide.mp4",
+    title: "Sensitivity",
+    description: "Control the rotation sensitivity of the vibing art wrt the amplitude of your selected music.",
+    videoUrl: "/videos/sensitivity.mp4",
     isImageLeft: false
   },
   {
     id: 9,
-    title: "Wallet Connection",
-    description: "Connect your wallet to be able to mint your drawing as an on-chain svg NFT.",
-    videoUrl: "/videos/connection.mp4",
+    title: "Hide",
+    description: "Hide the toolbox and enjoy the vibing art!",
+    videoUrl: "/videos/hide.mp4",
     isImageLeft: true
   },
   {
     id: 10,
+    title: "Wallet Connection",
+    description: "Connect your wallet to be able to mint your drawing as an on-chain svg NFT.",
+    videoUrl: "/videos/connection.mp4",
+    isImageLeft: false
+  },
+  {
+    id: 11,
     title: "Save & Mint",
     description: "Download your drawing as an SVG + mint it as an 100% on-chain NFT.",
     videoUrl: "/videos/minting.mp4",
-    isImageLeft: false
+    isImageLeft: true
   }
 ];
 
