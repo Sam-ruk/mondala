@@ -204,7 +204,7 @@ export default function useMint({
       } else if (mintError.message) {
         errorMessage = mintError.message;
       }
-      setAlert({ message: errorMessage, type: 'error' });
+      setAlert({ message: 'Please switch the selected chain in your wallet to Monad Testnet.', type: 'error' });
       return false;
     }
   };
