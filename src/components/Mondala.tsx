@@ -168,11 +168,22 @@ export default function Mondala() {
 
         try {
           setAlert({ message: 'Connecting wallet... Please approve in your wallet.', type: 'success' });
-          await connect({ connector });
-          setAlert({ message: 'Wallet connected successfully.', type: 'success' });
+          const result = await connect({ connector });
+          
+          await new Promise(resolve => setTimeout(resolve, 3000));
+          
+          if (result) {
+            setAlert({ message: 'Wallet connected successfully! You can now mint your NFT.', type: 'success' });
+          } else {
+            setAlert({ message: 'Failed to connect wallet. Please try again.', type: 'error' });
+          }
         } catch (connectError) {
           console.error('Wallet connection error:', connectError);
-          setAlert({ message: 'Failed to connect wallet.', type: 'error' });
+          if (connectError.message?.includes('User rejected')) {
+            setAlert({ message: 'Connection cancelled. Please approve the connection in your wallet.', type: 'error' });
+          } else {
+            setAlert({ message: 'Failed to connect wallet. Please try again.', type: 'error' });
+          }
         }
       } else {
         await saveAndMint();
@@ -181,6 +192,7 @@ export default function Mondala() {
       setIsProcessing(false);
     }
   };
+
 
   const canvasConfig: CanvasConfig = {
     canvasRef,
