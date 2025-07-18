@@ -11,7 +11,7 @@ export default function Home() {
     ? process.env.NEXT_PUBLIC_WHITELIST.split(',').map(addr => addr.trim().toLowerCase())
     : [];
 
-  // Generate floating particles
+  // Generate particles
   useEffect(() => {
     const generateParticles = () => {
       const newParticles = [];
