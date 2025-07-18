@@ -5,8 +5,18 @@ export default function Home() {
   const [walletAddress, setWalletAddress] = useState('');
   const [result, setResult] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [particles, setParticles] = useState([]);
 
+  type Particle = {
+    id: number;
+    x: number;
+    y: number;
+    size: number;
+    duration: number;
+    delay: number;
+  };
+
+  const [particles, setParticles] = useState<Particle[]>([]);
+  
   const whitelist = process.env.NEXT_PUBLIC_WHITELIST
     ? process.env.NEXT_PUBLIC_WHITELIST.split(',').map(addr => addr.trim().toLowerCase())
     : [];
