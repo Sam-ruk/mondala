@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 
 export default function Home() {
   const [walletAddress, setWalletAddress] = useState('');
-  const [result, setResult] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
   type Particle = {
@@ -15,8 +14,14 @@ export default function Home() {
     delay: number;
   };
 
+  type Result = {
+    type: 'success' | 'error';
+    message: string;
+  };
+
   const [particles, setParticles] = useState<Particle[]>([]);
-  
+  const [result, setResult] = useState<Result | null>(null);
+
   const whitelist = process.env.NEXT_PUBLIC_WHITELIST
     ? process.env.NEXT_PUBLIC_WHITELIST.split(',').map(addr => addr.trim().toLowerCase())
     : [];
