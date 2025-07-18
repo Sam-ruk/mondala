@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Providers } from "./providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,11 +13,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Mondala",
-  description: "On-chain Mandala.",
+  title: "LFP WL Checker",
+  description: "Checker for phase III mint- LFP FEET PASS.",
   icons: {
     icon: [
-      { url: '/mondala_logo.png', type: 'image/png' },
+      { url: '/lfp_logo.jpg', type: 'image/jpg' },
     ],
   },
 };
@@ -31,15 +30,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link rel="icon" href="/mondala_logo.png" type="image/png" />
+        <link rel="icon" href="/mondala_logo.png" type="image/jpg" />
         <link href="https://fonts.googleapis.com/css2?family=Rouge+Script&display=swap" rel="stylesheet"/>
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Providers>
-          {children}
-        </Providers>
+        {children}
       </body>
     </html>
   );
