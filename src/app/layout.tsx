@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "LFP WL Checker",
-  description: "Checker for phase III mint- LFP FEET PASS.",
+  title: "Mondala",
+  description: "On-chain Mandala.",
   icons: {
     icon: [
       { url: '/lfp_logo.jpg', type: 'image/jpg' },
